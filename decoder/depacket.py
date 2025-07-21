@@ -17,11 +17,10 @@ class DePacket():
             return mess, "error"
         else:
             res = mess[4:]
-            res = mess[-4:]
             code = res[0:2]
             if code not in self.codes:
                 return mess, "error"
-            res = res[2:]
+            res = res[2:-4]
             return res, self.codes[code]
         # return mess[6:], "basic"
         pass

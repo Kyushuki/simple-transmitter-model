@@ -99,6 +99,7 @@ class Model:
             while coder == "error":
                 packed_mess = self.demodulator.demodulate_qpsk(complex_mess)
                 byte_mess, coder = self.depacking.depacket(packed_mess)
+                counter += 1
                 if counter >= 100:
                     return "ОШИБКА, неудалось расшифровать сообщение"
         if coder == "mycode":

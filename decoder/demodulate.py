@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 
 class Demodulate():
@@ -19,6 +20,10 @@ class Demodulate():
         def demodulate(phi, beta, mess: list[complex]) -> str:
             """
             Непосредственно демодулирует
+
+            phi - фаза
+
+            beta - амплитуда
             """
             if abs(phi) >= 1e-6:
                 r = complex(np.exp(-1j * phi))
@@ -36,11 +41,12 @@ class Demodulate():
                 res += k
             return res
 
-        z01 = self.map["10"]
-        z02 = self.map["01"]
-        a = [(mess[0] / z01), (mess[1] / z02), (mess[-2] / z01), (mess[-1] / z02)]
-        beta = np.mean(np.abs(a))
-        phi = np.angle(np.mean(a))
+        z0 = (self.map["10"] + self.map["01"]) / 2
+        z = (mess[0] + mess[1] + mess[-1] + mess[-2]) / 2
+        a = math.atan2(z.imag, z.real)
+        b = math.atan2(z0.imag, z0.real)
+        beta = np.abs(z / z0)
+        phi = a - b
         res = demodulate(phi, beta, mess)
         result = ''.join(res)
         print(result)
