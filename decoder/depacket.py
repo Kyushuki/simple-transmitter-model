@@ -5,15 +5,19 @@ class DePacket():
     }
 
     def __init__(self):
-        self.HEADER = "1010"
+        self.PILOT = "1001"
 
     def depacket(self, mess: str) -> tuple:
+        """
+        Метод распаковывает демодулированное сообщение, убирая из него пилотные сигналы и определяя заданную кодировку
+        """
         res = ""
         code = ""
-        if mess[0:4] != self.HEADER:
+        if mess[0:4] != self.PILOT:
             return mess, "error"
         else:
             res = mess[4:]
+            # res = mess[-4:]
             code = res[0:2]
             if code not in self.codes:
                 return mess, "error"

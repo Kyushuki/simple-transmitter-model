@@ -4,47 +4,46 @@ import numpy as np
 
 class Demodulate():
     """
-    Класс демодуляции QPSK комплексных чисел в биты
+    Класс демодуляции комплексных чисел в биты
     """
     map = {
-        "00": complex(0, 1),
-        "01": complex(-1, 0),
-        "10": complex(0, -1),
-        "11": complex(1, 0),
+        "00": 1j,
+        "01": -1 + 0j,
+        "10": -1j,
+        "11": 1 + 0j,
     }
 
     def demodulate_qpsk(self, mess: list[complex]) -> str:
         """
-        Метод превращает комплексные числа в строку битов
-
-        Параметры:
-
-        mess: list[complex] список комплексных чисел
-
-        Возвращает - string
+        Метод демодулирует QPSK комплексные числа (сигнал) в биты
         """
-        z0 = complex(0, -1)
-        z = mess[0]
-        a = math.atan2(z.imag, z.real)
-        b = math.atan2(z0.imag, z0.real)
-        beta = np.abs(z / z0)
-        # print(beta)
-        phi = a - b
-        # print(mess)
-        if abs(phi) >= 1e-6:
-            r = complex(np.exp(-1j * phi))
-            mess = [c * r for c in mess]
-            # print(phi)
-        mess = [c / beta for c in mess]
-        res = []
-        print(f"Так выглядит перед модуляцией: \n{mess}")
-        for i in mess:
-            min_dist = float('inf')
-            k = ""
-            for key, value in self.map.items():
-                if abs(i - value) < min_dist:
-                    min_dist = abs(i - value)
-                    k = key
-            res += k
-        print(''.join(res))
-        return ''.join(res)
+        def demodulate(z0: complex, z: complex, mess: list[complex]) -> str:
+            """
+            Непосредственно демодулирует
+            """
+            a = math.atan2(z.imag, z.real)
+            b = math.atan2(z0.imag, z0.real)
+            beta = np.abs(z / z0)
+            phi = a - b
+            if abs(phi) >= 1e-6:
+                r = complex(np.exp(-1j * phi))
+                mess = [c * r for c in mess]
+            mess = [c / beta for c in mess]
+            res = []
+            print(f"Так выглядит перед модуляцией: \n{mess}")
+            for i in mess:
+                min_dist = float('inf')
+                k = ""
+                for key, value in self.map.items():
+                    if abs(i - value) < min_dist:
+                        min_dist = abs(i - value)
+                        k = key
+                res += k
+            return res
+
+        z0 = self.map["10"] + self.map["01"]
+        z = mess[0] + mess[1]
+        res = demodulate(z0, z, mess)
+        result = ''.join(res)
+        print(result)
+        return result

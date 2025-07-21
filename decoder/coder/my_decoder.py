@@ -15,12 +15,6 @@ class MyDecoder():
     def decode(self, mess: str) -> str:
         """
         Метод декодирует биты в символы собственной кодировки
-
-        Параметры:
-
-        mess: string
-
-        Возвращает декодированное сообщение string
         """
         res = ""
         for i in range(0, len(mess), self.k):

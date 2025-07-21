@@ -5,11 +5,17 @@ class Packet():
     }
 
     def __init__(self):
-        self.HEADER = "1010"
+        self.PILOT = "1001"
 
     def pack(self, mess: str, code: str) -> str:
+        """
+        Метод упаковывает сообщение в известный вид:
+
+        Пилотный сигнал - код кодировки - сообщение - пилотный сигнал
+        """
         result = ""
-        result += self.HEADER
+        result += self.PILOT
         result += self.codes[code]
         result += mess
+        # result += self.PILOT
         return result
