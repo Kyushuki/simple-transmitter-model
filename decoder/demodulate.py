@@ -1,4 +1,3 @@
-import math
 import numpy as np
 
 
@@ -17,20 +16,16 @@ class Demodulate():
         """
         Метод демодулирует QPSK комплексные числа (сигнал) в биты
         """
-        def demodulate(z0: complex, z: complex, mess: list[complex]) -> str:
+        def demodulate(phi, beta, mess: list[complex]) -> str:
             """
             Непосредственно демодулирует
             """
-            a = math.atan2(z.imag, z.real)
-            b = math.atan2(z0.imag, z0.real)
-            beta = np.abs(z / z0)
-            phi = a - b
             if abs(phi) >= 1e-6:
                 r = complex(np.exp(-1j * phi))
                 mess = [c * r for c in mess]
             mess = [c / beta for c in mess]
             res = []
-            print(f"Так выглядит перед модуляцией: \n{mess}")
+            print(f"Так выглядит перед демодуляцией: \n{mess}")
             for i in mess:
                 min_dist = float('inf')
                 k = ""
@@ -41,9 +36,12 @@ class Demodulate():
                 res += k
             return res
 
-        z0 = self.map["10"] + self.map["01"]
-        z = mess[0] + mess[1]
-        res = demodulate(z0, z, mess)
+        z01 = self.map["10"]
+        z02 = self.map["01"]
+        a = [(mess[0] / z01), (mess[1] / z02), (mess[-2] / z01), (mess[-1] / z02)]
+        beta = np.mean(np.abs(a))
+        phi = np.angle(np.mean(a))
+        res = demodulate(phi, beta, mess)
         result = ''.join(res)
         print(result)
         return result

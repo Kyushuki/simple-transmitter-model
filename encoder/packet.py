@@ -17,5 +17,5 @@ class Packet():
         result += self.PILOT
         result += self.codes[code]
         result += mess
-        # result += self.PILOT
+        result += self.PILOT
         return result
